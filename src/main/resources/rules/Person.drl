@@ -1,0 +1,11 @@
+package com.sample
+ 
+import com.sample.Person;
+ 
+rule "Wage"
+when
+	Person(hourlyRate*wage > 100, name : firstName, surname : lastName)
+then
+	System.out.println( "Hello" + " " + name + " " + surname + "!");
+	System.out.println( "You are rich!" );
+end
