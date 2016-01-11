@@ -1,6 +1,6 @@
 package com.sample
  
-import com.sample.Person;
+import com.sample.model.Person;
 
 declare Test
 	name : String

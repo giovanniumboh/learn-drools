@@ -1,25 +1,16 @@
 package com.sample;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.kie.api.KieServices;
-import org.kie.api.builder.KieScanner;
 import org.kie.api.builder.ReleaseId;
-import org.kie.api.cdi.KSession;
-import org.kie.api.command.Command;
-import org.kie.api.command.KieCommands;
-import org.kie.api.definition.type.FactType;
-import org.kie.api.runtime.ExecutionResults;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.StatelessKieSession;
-import org.kie.internal.runtime.manager.cdi.qualifier.Singleton;
+
+import com.sample.model.Person;
 
 /**
  * This is a sample class to launch a rule.
  */
-// @Singleton
 public class DroolsTest {
 
 	static KieContainer kContainer = null;
@@ -39,12 +30,13 @@ public class DroolsTest {
 			// load up the knowledge base
 			KieServices ks = KieServices.Factory.get();
 
-			ReleaseId releaseId = ks.newReleaseId("com.giovanni", "contest-test", "1.0");
-
+			// ReleaseId releaseId = ks.newReleaseId("com.giovanni",
+			// "contest-test", "1.0");
 			// kContainer = ks.newKieContainer(releaseId);
+
 			kContainer = ks.getKieClasspathContainer();
 
-			KieScanner kScanner = ks.newKieScanner(kContainer);
+			// KieScanner kScanner = ks.newKieScanner(kContainer);
 
 			kSession = getStatefulSession();
 
@@ -67,7 +59,7 @@ public class DroolsTest {
 			System.out.println();
 			System.out.println("name " + "Tom Summers" + " change to " + p.getFirstName() + " " + p.getLastName());
 
-			kScanner.start(1000L);
+			// kScanner.start(1000L);
 
 			// KieCommands kCommand = ks.getCommands();
 			// kCommand.newInsert(p, "tom", true, null);
