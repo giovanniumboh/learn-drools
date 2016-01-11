@@ -30,8 +30,9 @@ public class DroolsTest {
 			// load up the knowledge base
 			KieServices ks = KieServices.Factory.get();
 
-			ReleaseId releaseId = ks.newReleaseId("com.giovanni", "contest-test", "1.0");
-			kContainer = ks.newKieContainer(releaseId);
+			// ReleaseId releaseId = ks.newReleaseId("com.giovanni",
+			// "contest-test", "1.0");
+			// kContainer = ks.newKieContainer(releaseId);
 
 			kContainer = ks.getKieClasspathContainer();
 
