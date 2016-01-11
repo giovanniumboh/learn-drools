@@ -1,27 +1,52 @@
 package com.sample;
 
-import org.kie.api.KieBase;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.kie.api.KieServices;
+import org.kie.api.builder.KieScanner;
+import org.kie.api.builder.ReleaseId;
+import org.kie.api.cdi.KSession;
+import org.kie.api.command.Command;
+import org.kie.api.command.KieCommands;
+import org.kie.api.definition.type.FactType;
+import org.kie.api.runtime.ExecutionResults;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.StatelessKieSession;
+import org.kie.internal.runtime.manager.cdi.qualifier.Singleton;
 
 /**
  * This is a sample class to launch a rule.
  */
+// @Singleton
 public class DroolsTest {
 
+	static KieContainer kContainer = null;
+
+	public static StatelessKieSession getStatelessSession() {
+		return kContainer.newStatelessKieSession();
+	}
+
+	public static KieSession getStatefulSession() {
+		// return kContainer.newKieSession();
+		return kContainer.newKieSession("ksession-rules");
+	}
+
 	public static final void main(String[] args) {
+		KieSession kSession = null;
 		try {
 			// load up the knowledge base
 			KieServices ks = KieServices.Factory.get();
-			KieContainer kContainer = ks.getKieClasspathContainer();
-			KieSession kSession = kContainer.newKieSession("ksession-rules");
-			// KieBase kieBase = kContainer.newKieBase(arg0)
 
-			// go !
-			// Message message = new Message();
-			// message.setMessage("Hello World");
-			// message.setStatus(Message.HELLO);
+			ReleaseId releaseId = ks.newReleaseId("com.giovanni", "contest-test", "1.0");
+
+			// kContainer = ks.newKieContainer(releaseId);
+			kContainer = ks.getKieClasspathContainer();
+
+			KieScanner kScanner = ks.newKieScanner(kContainer);
+
+			kSession = getStatefulSession();
 
 			Person p = new Person();
 			p.setWage(12);
@@ -29,38 +54,44 @@ public class DroolsTest {
 			p.setLastName("Summers");
 			p.setHourlyRate(10);
 
+			Person p1 = new Person();
+			p1.setWage(12);
+			p1.setFirstName("Jerry");
+			p1.setLastName("Summers");
+			p1.setHourlyRate(10);
+
 			kSession.insert(p);
+			kSession.insert(p1);
 			kSession.fireAllRules();
+
+			System.out.println();
+			System.out.println("name " + "Tom Summers" + " change to " + p.getFirstName() + " " + p.getLastName());
+
+			kScanner.start(1000L);
+
+			// KieCommands kCommand = ks.getCommands();
+			// kCommand.newInsert(p, "tom", true, null);
+			// kCommand.newInsert(p1, "jerry", true, null);
+			//
+			// List<Command> listCommand = new ArrayList<Command>();
+			// listCommand.add(kCommand.newInsert(p, "tom", true, null));
+			// listCommand.add(kCommand.newInsert(p1, "jerry", true, null));
+			//
+			// ExecutionResults er =
+			// kSession.execute(kCommand.newBatchExecution(listCommand));
+			// kSession.fireAllRules();
+
+			// kCommand.newFireAllRules();
+
+			// System.out.println();
+			// System.out.println(((Person) er.getValue("tom")).getFirstName());
+			// System.out.println("isi fact ada " + kSession.getFactCount());
+
 		} catch (Throwable t) {
 			t.printStackTrace();
+		} finally {
+			kSession.dispose();
 		}
-	}
-
-	public static class Message {
-
-		public static final int HELLO = 0;
-		public static final int GOODBYE = 1;
-
-		private String message;
-
-		private int status;
-
-		public String getMessage() {
-			return this.message;
-		}
-
-		public void setMessage(String message) {
-			this.message = message;
-		}
-
-		public int getStatus() {
-			return this.status;
-		}
-
-		public void setStatus(int status) {
-			this.status = status;
-		}
-
 	}
 
 }

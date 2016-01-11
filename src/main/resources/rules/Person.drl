@@ -1,11 +1,32 @@
 package com.sample
  
 import com.sample.Person;
- 
+
+declare Test
+	name : String
+end
+
 rule "Wage"
+no-loop true
 when
-	Person(hourlyRate*wage > 100, name : firstName, surname : lastName)
+	$person : Person(hourlyRate*wage > 100, name : firstName, surname : lastName)
 then
+	$person.setFirstName(name + "my");
+	$person.setLastName("Henderson");
+	update($person);
+	//Test test = new Test();
+	//test.setName("Gio");
+	//insertLogical(test);
+
 	System.out.println( "Hello" + " " + name + " " + surname + "!");
 	System.out.println( "You are rich!" );
 end
+
+rule "Change name"
+when
+	$person : Person (name : firstName == "Tommy")
+then
+	Test test = new Test();
+	test.setName("Gio");
+	insertLogical(test);
+end	
