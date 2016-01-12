@@ -2,9 +2,7 @@ package com.sample.test;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Scanner;
 
 import org.drools.compiler.kproject.ReleaseIdImpl;
@@ -15,19 +13,15 @@ import org.kie.api.KieServices;
 import org.kie.api.builder.KieModule;
 import org.kie.api.builder.KieRepository;
 import org.kie.api.builder.KieScanner;
-import org.kie.api.command.Command;
 import org.kie.api.conf.EventProcessingOption;
 import org.kie.api.definition.KiePackage;
 import org.kie.api.definition.rule.Rule;
-import org.kie.api.runtime.ExecutionResults;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.StatelessKieSession;
-import org.kie.internal.command.CommandFactory;
 
 import com.giovanni.contest_test.Agent;
 import com.giovanni.contest_test.Contest;
-import com.giovanni.contest_test.ContestDetail;
 import com.giovanni.contest_test.Policy;
 
 /**
@@ -181,7 +175,7 @@ public class KieApiTest {
 			// kSession.insert(policy3);
 
 			statelessSession.execute(Arrays.asList(new Object[] { policy1, policy2, policy3 }));
-			System.out.println("isi fact ada " + kSession.getFactCount());
+			// System.out.println("isi fact ada " + kSession.getFactCount());
 
 			// kSession.getAgenda().getAgendaGroup("contest").setFocus();
 			// kSession.fireAllRules();
