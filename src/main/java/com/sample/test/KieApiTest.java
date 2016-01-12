@@ -2,6 +2,9 @@ package com.sample.test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 import org.drools.compiler.kproject.ReleaseIdImpl;
@@ -12,26 +15,30 @@ import org.kie.api.KieServices;
 import org.kie.api.builder.KieModule;
 import org.kie.api.builder.KieRepository;
 import org.kie.api.builder.KieScanner;
-import org.kie.api.builder.ReleaseId;
+import org.kie.api.command.Command;
 import org.kie.api.conf.EventProcessingOption;
 import org.kie.api.definition.KiePackage;
 import org.kie.api.definition.rule.Rule;
+import org.kie.api.runtime.ExecutionResults;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.StatelessKieSession;
+import org.kie.internal.command.CommandFactory;
 
 import com.giovanni.contest_test.Agent;
 import com.giovanni.contest_test.Contest;
+import com.giovanni.contest_test.ContestDetail;
 import com.giovanni.contest_test.Policy;
 
 /**
  * This is a sample class to launch a rule.
  */
-public class KieScannerTest {
+public class KieApiTest {
 
 	static KieContainer kContainer = null;
 	static KieSession kSession = null;
 	static KieServices ks = null;
+	static StatelessKieSession statelessSession = null;
 
 	public static void testLoad1() {
 		ks = KieServices.Factory.get();
@@ -87,7 +94,8 @@ public class KieScannerTest {
 		InputStream is = urlResource.getInputStream();
 		KieModule kModule = kr.addKieModule(ks.getResources().newInputStreamResource(is));
 		kContainer = ks.newKieContainer(kModule.getReleaseId());
-		kSession = kContainer.newKieSession();
+		kSession = getStatefulSession();
+		statelessSession = getStatelessSession();
 
 		// KieScanner kieScanner = ks.newKieScanner(kContainer);
 		// System.out.println("kieScanner " + kieScanner);
@@ -101,9 +109,12 @@ public class KieScannerTest {
 		KieBaseConfiguration kieBaseConf = ks.newKieBaseConfiguration();
 		kieBaseConf.setOption(EventProcessingOption.STREAM);
 		KieBase kBase = kContainer.newKieBase(kieBaseConf);
+		System.out.println("Isi rule yang ada : ");
+		int i = 0;
 		for (KiePackage a : kBase.getKiePackages()) {
 			for (Rule r : a.getRules()) {
-				System.out.println("KiePackage {} Rule {} = " + a.getName() + "-" + r.getName());
+				System.out.println(i + 1 + ". KiePackage - Rule = " + a.getName() + "-" + r.getName());
+				i++;
 			}
 		}
 	}
@@ -116,104 +127,76 @@ public class KieScannerTest {
 			// load up the knowledge base #2
 			// testLoad2();
 
-			// load up the knowledge base #2
+			// load up the knowledge base #3
 			testLoad3();
-
-			// KieModuleModel kieModuleModel = ks.newKieModuleModel();
-
-			// KieBaseModel kieBaseModel1 =
-			// kieModuleModel.newKieBaseModel("KBase1 ").setDefault(true)
-			// .setEqualsBehavior(EqualityBehaviorOption.EQUALITY)
-			// .setEventProcessingMode(EventProcessingOption.STREAM);
-
-			// KieSessionModel ksessionModel1 =
-			// kieBaseModel1.newKieSessionModel("KSession1").setDefault(true)
-			// .setType(KieSessionModel.KieSessionType.STATEFUL).setClockType(ClockTypeOption.get("realtime"));
-
-			// KieFileSystem kfs = ks.newKieFileSystem();
-			// ks.newKieBuilder(kfs).buildAll();
-
-			// kContainer = ks.getKieClasspathContainer();
-
-			// KieScanner kScanner = ks.newKieScanner(kContainer);
-
-			// kSession = getStatefulSession();
-			//
-			// Person p = new Person();
-			// p.setWage(12);
-			// p.setFirstName("Tom");
-			// p.setLastName("Summers");
-			// p.setHourlyRate(10);
-			//
-			// Person p1 = new Person();
-			// p1.setWage(12);
-			// p1.setFirstName("Jerry");
-			// p1.setLastName("Summers");
-			// p1.setHourlyRate(10);
-			//
-			// kSession.insert(p);
-			// kSession.insert(p1);
-			// kSession.fireAllRules();
-			//
-			// System.out.println();
-			// System.out.println("name " + "Tom Summers" + " change to " +
-			// p.getFirstName() + " " + p.getLastName());
-
-			// kScanner.start(1000L);
 
 			Agent agent = new Agent();
 			agent.setAgentCode("AG01");
 			agent.setAgentName("Giovanni");
-			kSession.insert(agent);
-			// kSession.fireAllRules();
+			statelessSession.execute(agent);
+			// kSession.insert(agent);
 
 			Contest contest1 = new Contest();
 			contest1.setContestCode("C0001");
 			contest1.setContestName("Contest Silver");
 			contest1.setNeedMonitor(false);
-			kSession.insert(contest1);
-			// kSession.fireAllRules();
+			statelessSession.execute(contest1);
+			// kSession.insert(contest1);
 
 			Contest contest2 = new Contest();
 			contest2.setContestCode("C0002");
 			contest2.setContestName("Contest Gold");
 			contest2.setNeedMonitor(false);
-			kSession.insert(contest2);
+			statelessSession.execute(contest2);
+			// kSession.insert(contest2);
 			// kSession.fireAllRules();
 
 			Contest contest3 = new Contest();
 			contest3.setContestCode("C0003");
 			contest3.setContestName("Contest Platinum");
 			contest3.setNeedMonitor(true);
-			kSession.insert(contest3);
-			// kSession.fireAllRules();
+			statelessSession.execute(contest3);
+			// kSession.insert(contest3);
 
 			Policy policy1 = new Policy();
 			policy1.setAgentCode("AG01");
 			policy1.setPolicyNo("PLC01");
 			policy1.setPolicyType("Silver");
-			kSession.insert(policy1);
+			// statelessSession.execute(policy1);
+			// kSession.insert(policy1);
 			// kSession.fireAllRules();
 
 			Policy policy2 = new Policy();
 			policy2.setAgentCode("AG01");
 			policy2.setPolicyNo("PLC02");
 			policy2.setPolicyType("Gold");
-			kSession.insert(policy2);
-			// kSession.fireAllRules();
+			// statelessSession.execute(policy2);
+			// kSession.insert(policy2);
 
 			Policy policy3 = new Policy();
 			policy3.setAgentCode("AG01");
 			policy3.setPolicyNo("PLC03");
 			policy3.setPolicyType("Platinum");
-			kSession.insert(policy3);
+			// statelessSession.execute(policy3);
+			// kSession.insert(policy3);
 
+			statelessSession.execute(Arrays.asList(new Object[] { policy1, policy2, policy3 }));
 			System.out.println("isi fact ada " + kSession.getFactCount());
 
-			kSession. getAgenda().getAgendaGroup("contest").setFocus();;
-			kSession.fireAllRules();
-			// System.out.println("nama agent Giovanni setelah dirubah oleh rule
-			// engine " + agent.getAgentName());
+			// kSession.getAgenda().getAgendaGroup("contest").setFocus();
+			// kSession.fireAllRules();
+
+			// List cmds = new ArrayList();
+			// cmds.add(CommandFactory.newSetGlobal("listContestDetail", new
+			// ArrayList<ContestDetail>()));
+
+			// statlessKs.setGlobal("listContestDetail", new
+			// ArrayList<ContestDetail>());
+
+			// ExecutionResults results =
+			// kSession.execute(CommandFactory.newBatchExecution(commands));
+			// results.getValue("listContestDetail"); // returns the ArrayList
+
 		} catch (Throwable t) {
 			t.printStackTrace();
 		} finally {
