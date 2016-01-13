@@ -7,7 +7,9 @@ import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.StatelessKieSession;
+import org.kie.api.runtime.rule.FactHandle;
 
+import com.sample.model.Fire;
 import com.sample.model.Room;
 import com.sample.model.Sprinkler;
 
@@ -23,7 +25,7 @@ public class RoomTest {
 	}
 
 	public static KieSession getStatefulSession() {
-		return kContainer.newKieSession("kSession-rules");
+		return kContainer.newKieSession("ksession-rules");
 	}
 
 	public static final void main(String[] args) {
@@ -45,11 +47,18 @@ public class RoomTest {
 
 				Sprinkler sprinkler = new Sprinkler(room);
 				kSession.insert(sprinkler);
-
 			}
 
-			kSession.fireAllRules();
+			Fire kitchenFire = new Fire(name2room.get("kitchen"));
+			Fire officeFire = new Fire(name2room.get("office"));
 
+			FactHandle kitchenFireHandle = kSession.insert(kitchenFire);
+			FactHandle officeFireHandle = kSession.insert(officeFire);
+
+			// kSession.delete(kitchenFireHandle);
+			// kSession.delete(officeFireHandle);
+
+			kSession.fireAllRules();
 		} catch (Throwable t) {
 			t.printStackTrace();
 		} finally {
