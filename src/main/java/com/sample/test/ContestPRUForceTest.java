@@ -2,16 +2,15 @@ package com.sample.test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.drools.compiler.kproject.ReleaseIdImpl;
 import org.drools.core.io.impl.UrlResource;
-import org.kie.api.KieBase;
 import org.kie.api.KieBaseConfiguration;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieModule;
 import org.kie.api.builder.KieRepository;
-import org.kie.api.builder.KieScanner;
 import org.kie.api.conf.EventProcessingOption;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
@@ -20,8 +19,8 @@ import org.kie.api.runtime.rule.QueryResults;
 import org.kie.api.runtime.rule.QueryResultsRow;
 
 import com.giovanni.contest_test.Agent;
-import com.giovanni.contest_test.Contest;
 import com.giovanni.contest_test.ContestDetail;
+import com.giovanni.contest_test.ContestMaster;
 import com.giovanni.contest_test.Policy;
 
 /**
@@ -94,7 +93,7 @@ public class ContestPRUForceTest {
 		} catch (Throwable t) {
 			t.printStackTrace();
 		} finally {
-			// kSession.dispose();
+			kSession.dispose();
 		}
 	}
 
@@ -105,29 +104,16 @@ public class ContestPRUForceTest {
 		// statelessSession.execute(agent);
 		kSession.insert(agent);
 
-		Contest contest1 = new Contest();
-		contest1.setContestCode("C0001");
-		contest1.setContestName("Contest Silver");
-		contest1.setContestType("Silver");
-		contest1.setNeedMonitor(false);
+		ContestMaster contestFsc = new ContestMaster();
+		contestFsc.setContestCode("C0001");
+		contestFsc.setContestName("Contest FSC");
+		contestFsc.setChannel("PD");
+		contestFsc.setStartDate(convertStringToDate("01/01/2016"));
+		contestFsc.setEndDate(convertStringToDate("01/12/2016"));
+		contestFsc.setReviewingFlag("1");
+		contestFsc.setReviewingEndDate(convertStringToDate("01/06/2017"));
 		// statelessSession.execute(contest1);
-		kSession.insert(contest1);
-
-		Contest contest2 = new Contest();
-		contest2.setContestCode("C0002");
-		contest2.setContestName("Contest Gold");
-		contest2.setContestType("Gold");
-		contest2.setNeedMonitor(false);
-		// statelessSession.execute(contest2);
-		kSession.insert(contest2);
-
-		Contest contest3 = new Contest();
-		contest3.setContestCode("C0003");
-		contest3.setContestName("Contest Platinum");
-		contest3.setNeedMonitor(true);
-		contest3.setContestType("Platinum");
-		// statelessSession.execute(contest3);
-		kSession.insert(contest3);
+		kSession.insert(contestFsc);
 
 		Policy policy1 = new Policy();
 		policy1.setAgentCode("AG01");
@@ -154,6 +140,18 @@ public class ContestPRUForceTest {
 		// statelessSession.execute(Arrays.asList(new Object[] { policy1,
 		// policy2, policy3 }));
 		// System.out.println("isi fact ada " + kSession.getFactCount());
+	}
+
+	private static Date convertStringToDate(String dateString) {
+		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+		Date date = null;
+		try {
+			date = formatter.parse(dateString);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return date;
+
 	}
 
 	public static StatelessKieSession getStatelessSession() {
