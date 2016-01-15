@@ -42,11 +42,12 @@ public class RoomTest {
 
 			for (String name : names) {
 				Room room = new Room(name);
-				name2room.put(name, room);
 				kSession.insert(room);
 
 				Sprinkler sprinkler = new Sprinkler(room);
 				kSession.insert(sprinkler);
+
+				name2room.put(name, room);
 			}
 
 			Fire kitchenFire = new Fire(name2room.get("kitchen"));

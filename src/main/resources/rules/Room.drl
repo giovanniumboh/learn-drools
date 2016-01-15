@@ -6,19 +6,27 @@ import com.sample.model.*;
 rule "When there is a fire turn on the sprinkler"
 when
     Fire($room : room)
-    $sprinkler : Sprinkler( room == $room, on == false )
+    $sprinkler : Sprinkler(room.name == $room.name, on == false )
 then
+    System.out.println("isi room " + $room.getName());
+	System.out.println("rule 1 fired!!!");
     modify( $sprinkler ) { setOn( true ) };
+    
+    //other way
+    //$sprinkler.setOn(true);
+    //update($sprinkler);
+    
     System.out.println( "Turn on the sprinkler for room " + $room.getName() );
 end
 
 
 rule "When the fire is gone turn off the sprinkler"
 when
-    $room : Room( )
+    $room : Room()
     $sprinkler : Sprinkler( room == $room, on == true )
     not Fire( room == $room )
 then
+	System.out.println("rule 2 fired!!!");
     modify( $sprinkler ) { setOn( false ) };
     System.out.println( "Turn off the sprinkler for room " + $room.getName() );
 end
@@ -28,7 +36,8 @@ rule "Raise the alarm when we have one or more fires"
 when
     exists Fire()
 then
-    insert( new Alarm() );
+	System.out.println("rule 3 fired!!!");
+    insertLogical( new Alarm() );
     System.out.println( "Raise the alarm" );
 end
 
@@ -38,6 +47,7 @@ when
     not Fire()
     $alarm : Alarm()
 then
+	System.out.println("rule 4 fired!!!");
     delete( $alarm );
     System.out.println( "Cancel the alarm" );
 end
@@ -48,5 +58,6 @@ when
     not Alarm()
     not Sprinkler( on == true ) 
 then
+	System.out.println("rule 5 fired!!!");
     System.out.println( "Everything is ok" );
 end

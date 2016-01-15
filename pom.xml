@@ -11,8 +11,15 @@
 		<dependency>
 			<groupId>org.drools</groupId>
 			<artifactId>knowledge-api</artifactId>
-			<version>6.3.0.Final</version>
+			<version>6.2.0.Final</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.drools</groupId>
+			<artifactId>drools-decisiontables</artifactId>
+			<version>6.2.0.Final</version>
+		</dependency>
+
 
 		<!-- test called rule jar -->
 		<dependency>
