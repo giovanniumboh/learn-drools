@@ -77,7 +77,7 @@ public class ContestPRUForceTest {
 	public static final void main(String[] args) {
 		try {
 			// load up the knowledge base #3
-			// testLoad3();
+			testLoad3();
 
 			LoadFactTestScenarioContestFsc();
 
@@ -108,17 +108,17 @@ public class ContestPRUForceTest {
 		contestFsc.setContestCode("C0001");
 		contestFsc.setContestName("Contest FSC");
 		contestFsc.setChannel("PD");
-		contestFsc.setStartDate(convertStringToDate("01/01/2016"));
-		contestFsc.setEndDate(convertStringToDate("01/12/2016"));
+		contestFsc.setStartDate(new Date());
+		contestFsc.setEndDate(new Date());
 		contestFsc.setReviewingFlag("1");
-		contestFsc.setReviewingEndDate(convertStringToDate("01/06/2017"));
+		contestFsc.setReviewingEndDate(new Date());
 		// statelessSession.execute(contest1);
 		kSession.insert(contestFsc);
 
 		Policy policy1 = new Policy();
 		policy1.setAgentCode("AG01");
 		policy1.setPolicyNo("PLC01");
-		policy1.setPolicyType("Silver");
+		policy1.setBillingChannel("PD");
 		// statelessSession.execute(policy1);
 		kSession.insert(policy1);
 
@@ -127,16 +127,16 @@ public class ContestPRUForceTest {
 		policy2.setPolicyNo("PLC01");
 		policy2.setPolicyType("Gold");
 		// statelessSession.execute(policy2);
-		kSession.insert(policy2);
+		// kSession.insert(policy2);
 
 		Policy policy3 = new Policy();
 		policy3.setAgentCode("AG01");
 		policy3.setPolicyNo("PLC03");
 		policy3.setPolicyType("Platinum");
 		// statelessSession.execute(policy3);
-		kSession.insert(policy3);
+		// kSession.insert(policy3);
 
-		kSession.getAgenda().getAgendaGroup("contest").setFocus();
+		kSession.getAgenda().getAgendaGroup("contest_pd").setFocus();
 		// statelessSession.execute(Arrays.asList(new Object[] { policy1,
 		// policy2, policy3 }));
 		// System.out.println("isi fact ada " + kSession.getFactCount());
