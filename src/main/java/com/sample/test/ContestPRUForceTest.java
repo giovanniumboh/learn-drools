@@ -105,7 +105,7 @@ public class ContestPRUForceTest {
 			Policy policy = new Policy();
 			policy.setPolicyNo("PLC0" + (i));
 			policy.setBillingChannel("PD");
-			policy.setProductCode("SILVER");
+			policy.setProductCode("GOLD");
 			if (i <= 3) {
 				policy.setInstallmentPremium(new BigDecimal(1000000));
 				policy.setAgentNumber("AG01");
@@ -142,7 +142,7 @@ public class ContestPRUForceTest {
 		contestParamFsc1.setContestCode(contestFsc.getContestCode());
 		contestParamFsc1.setParamCode("PRM01");
 		contestParamFsc1.setOperator("==");
-		contestParamFsc1.setValue("LEADER");
+		contestParamFsc1.setValue("AGENT");
 		kSession.insert(contestParamFsc1);
 
 		ContestParameter contestParamFsc2 = new ContestParameter();
@@ -160,7 +160,21 @@ public class ContestPRUForceTest {
 		contestFsc2.setEndDate(new Date());
 		contestFsc2.setReviewingFlag("1");
 		contestFsc2.setReviewingEndDate(new Date());
-		// kSession.insert(contestFsc2);
+		kSession.insert(contestFsc2);
+
+		ContestParameter contestParamFsc21 = new ContestParameter();
+		contestParamFsc21.setContestCode(contestFsc2.getContestCode());
+		contestParamFsc21.setParamCode("PRM01");
+		contestParamFsc21.setOperator("==");
+		contestParamFsc21.setValue("LEADER");
+		kSession.insert(contestParamFsc21);
+
+		ContestParameter contestParamFsc22 = new ContestParameter();
+		contestParamFsc22.setContestCode(contestFsc2.getContestCode());
+		contestParamFsc22.setParamCode("PRM02");
+		contestParamFsc22.setOperator("==");
+		contestParamFsc22.setValue("GOLD");
+		kSession.insert(contestParamFsc22);
 
 		kSession.getAgenda().getAgendaGroup("contest_pd_fsc").setFocus();
 	}
