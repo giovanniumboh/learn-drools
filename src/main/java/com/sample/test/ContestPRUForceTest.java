@@ -2,6 +2,7 @@ package com.sample.test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -21,6 +22,7 @@ import org.kie.api.runtime.rule.QueryResultsRow;
 import com.giovanni.contest_test.Agent;
 import com.giovanni.contest_test.ContestDetail;
 import com.giovanni.contest_test.ContestMaster;
+import com.giovanni.contest_test.ContestParameter;
 import com.giovanni.contest_test.Policy;
 
 /**
@@ -79,7 +81,7 @@ public class ContestPRUForceTest {
 			// load up the knowledge base #3
 			testLoad3();
 
-			LoadFactTestScenarioContestFsc();
+			LoadFactTestScenarioInsertNewPolicyContestFsc();
 
 			kSession.fireAllRules();
 
@@ -87,8 +89,9 @@ public class ContestPRUForceTest {
 			System.out.println();
 			for (QueryResultsRow row : results2) {
 				ContestDetail contestDetail = (ContestDetail) row.get("$result");
-				System.out.println("Contest detail object : " + contestDetail.getAgentCode() + "\t"
-						+ contestDetail.getPolicyNo() + "\t" + contestDetail.getContestCode());
+				System.out.println(
+						"Contest detail object : " + contestDetail.getAgentCode() + "\t" + contestDetail.getPolicyNo()
+								+ "\t" + contestDetail.getContestCode() + "\t" + contestDetail.getApi());
 			}
 		} catch (Throwable t) {
 			t.printStackTrace();
@@ -97,49 +100,69 @@ public class ContestPRUForceTest {
 		}
 	}
 
-	public static void LoadFactTestScenarioContestFsc() {
-		Agent agent = new Agent();
-		agent.setAgentCode("AG01");
-		agent.setAgentName("Gio");
-		// statelessSession.execute(agent);
-		kSession.insert(agent);
+	public static void LoadFactTestScenarioInsertNewPolicyContestFsc() {
+		for (int i = 1; i <= 5; i++) {
+			Policy policy = new Policy();
+			policy.setPolicyNo("PLC0" + (i));
+			policy.setBillingChannel("PD");
+			policy.setProductCode("SILVER");
+			if (i <= 3) {
+				policy.setInstallmentPremium(new BigDecimal(1000000));
+				policy.setAgentNumber("AG01");
+			} else {
+				policy.setAgentNumber("AG02");
+				policy.setInstallmentPremium(new BigDecimal(1500000));
+			}
+			kSession.insert(policy);
+		}
+
+		Agent agent1 = new Agent();
+		agent1.setAgentNumber("AG01");
+		agent1.setAgentName("Gio");
+		agent1.setAgentType("LEADER");
+		kSession.insert(agent1);
+
+		Agent agent2 = new Agent();
+		agent2.setAgentNumber("AG02");
+		agent2.setAgentName("Shadrach");
+		agent2.setAgentType("AGENT");
+		kSession.insert(agent2);
 
 		ContestMaster contestFsc = new ContestMaster();
 		contestFsc.setContestCode("C0001");
-		contestFsc.setContestName("Contest FSC");
+		contestFsc.setContestName("Contest FSC Partnership Distribution Awards Night Event");
 		contestFsc.setChannel("PD");
 		contestFsc.setStartDate(new Date());
 		contestFsc.setEndDate(new Date());
 		contestFsc.setReviewingFlag("1");
 		contestFsc.setReviewingEndDate(new Date());
-		// statelessSession.execute(contest1);
 		kSession.insert(contestFsc);
 
-		Policy policy1 = new Policy();
-		policy1.setAgentCode("AG01");
-		policy1.setPolicyNo("PLC01");
-		policy1.setBillingChannel("PD");
-		// statelessSession.execute(policy1);
-		kSession.insert(policy1);
+		ContestParameter contestParamFsc1 = new ContestParameter();
+		contestParamFsc1.setContestCode(contestFsc.getContestCode());
+		contestParamFsc1.setParamCode("PRM01");
+		contestParamFsc1.setOperator("==");
+		contestParamFsc1.setValue("LEADER");
+		kSession.insert(contestParamFsc1);
 
-		Policy policy2 = new Policy();
-		policy2.setAgentCode("AG01");
-		policy2.setPolicyNo("PLC01");
-		policy2.setPolicyType("Gold");
-		// statelessSession.execute(policy2);
-		// kSession.insert(policy2);
+		ContestParameter contestParamFsc2 = new ContestParameter();
+		contestParamFsc2.setContestCode(contestFsc.getContestCode());
+		contestParamFsc2.setParamCode("PRM02");
+		contestParamFsc2.setOperator("==");
+		contestParamFsc2.setValue("GOLD");
+		kSession.insert(contestParamFsc2);
 
-		Policy policy3 = new Policy();
-		policy3.setAgentCode("AG01");
-		policy3.setPolicyNo("PLC03");
-		policy3.setPolicyType("Platinum");
-		// statelessSession.execute(policy3);
-		// kSession.insert(policy3);
+		ContestMaster contestFsc2 = new ContestMaster();
+		contestFsc2.setContestCode("C0002");
+		contestFsc2.setContestName("Contest FSC Premier Club Gold");
+		contestFsc2.setChannel("PD");
+		contestFsc2.setStartDate(new Date());
+		contestFsc2.setEndDate(new Date());
+		contestFsc2.setReviewingFlag("1");
+		contestFsc2.setReviewingEndDate(new Date());
+		// kSession.insert(contestFsc2);
 
-		kSession.getAgenda().getAgendaGroup("contest_pd").setFocus();
-		// statelessSession.execute(Arrays.asList(new Object[] { policy1,
-		// policy2, policy3 }));
-		// System.out.println("isi fact ada " + kSession.getFactCount());
+		kSession.getAgenda().getAgendaGroup("contest_pd_fsc").setFocus();
 	}
 
 	private static Date convertStringToDate(String dateString) {
