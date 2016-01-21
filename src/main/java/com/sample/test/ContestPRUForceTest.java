@@ -101,21 +101,6 @@ public class ContestPRUForceTest {
 	}
 
 	public static void LoadFactTestScenarioInsertNewPolicyContestFsc() {
-		for (int i = 1; i <= 5; i++) {
-			Policy policy = new Policy();
-			policy.setPolicyNo("PLC0" + (i));
-			policy.setBillingChannel("PD");
-			policy.setProductCode("GOLD");
-			if (i <= 3) {
-				policy.setInstallmentPremium(new BigDecimal(1000000));
-				policy.setAgentNumber("AG01");
-			} else {
-				policy.setAgentNumber("AG02");
-				policy.setInstallmentPremium(new BigDecimal(1500000));
-			}
-			kSession.insert(policy);
-		}
-
 		Agent agent1 = new Agent();
 		agent1.setAgentNumber("AG01");
 		agent1.setAgentName("Gio");
@@ -127,6 +112,21 @@ public class ContestPRUForceTest {
 		agent2.setAgentName("Shadrach");
 		agent2.setAgentType("AGENT");
 		kSession.insert(agent2);
+
+		for (int i = 1; i <= 5; i++) {
+			Policy policy = new Policy();
+			policy.setPolicyNo("PLC0" + (i));
+			policy.setBillingChannel("PD");
+			policy.setProductCode("GOLD");
+			if (i <= 3) {
+				policy.setAgentNumber("AG01");
+				policy.setInstallmentPremium(new BigDecimal(1000000));
+			} else {
+				policy.setAgentNumber("AG02");
+				policy.setInstallmentPremium(new BigDecimal(1500000));
+			}
+			kSession.insert(policy);
+		}
 
 		ContestMaster contestFsc = new ContestMaster();
 		contestFsc.setContestCode("C0001");
