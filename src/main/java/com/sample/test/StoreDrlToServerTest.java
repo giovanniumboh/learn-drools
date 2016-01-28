@@ -11,19 +11,19 @@ import org.drools.core.io.impl.UrlResource;
 import org.kie.api.KieBase;
 import org.kie.api.KieBaseConfiguration;
 import org.kie.api.KieServices;
+import org.kie.api.builder.KieBuilder;
+import org.kie.api.builder.KieFileSystem;
 import org.kie.api.builder.KieModule;
 import org.kie.api.builder.KieRepository;
+import org.kie.api.builder.Message.Level;
 import org.kie.api.conf.EventProcessingOption;
 import org.kie.api.definition.KiePackage;
 import org.kie.api.definition.rule.Rule;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.StatelessKieSession;
-import org.kie.api.runtime.rule.QueryResults;
-import org.kie.api.runtime.rule.QueryResultsRow;
 
 import com.giovanni.contest_test.Agent;
-import com.giovanni.contest_test.ContestDetail;
 import com.giovanni.contest_test.ContestMaster;
 import com.giovanni.contest_test.ContestParameter;
 import com.giovanni.contest_test.Policy;
@@ -31,22 +31,20 @@ import com.giovanni.contest_test.Policy;
 /**
  * This is a sample class to launch a rule.
  */
-public class ContestPRUForceTest {
+public class StoreDrlToServerTest {
 
-	static KieContainer kContainer = null;
-	static KieSession kSession = null;
-	static KieServices ks = null;
+	static KieContainer kieContainer = null;
+	static KieSession kieSession = null;
+	static KieServices kieServices = null;
 	static StatelessKieSession statelessSession = null;
 
-	public static void testLoad3() throws IOException {
-		// url ini menuju ke maven repository file jar rule yang kita tuju,
-		// untuk pathnya bisa dilihat di business central menu Authoring ->
-		// Artifact Repository
-		String url = "http://localhost:8080/business-central/maven2/com/giovanni/contest-test/1.0/contest-test-1.0.jar";
-		ks = KieServices.Factory.get();
+	public static void testLoad1() throws IOException {
+		kieServices = KieServices.Factory.get();
+		// sampai di sini kieModule masih default
+		KieRepository kieRepository = kieServices.getRepository();
 
-		KieRepository kr = ks.getRepository();
-		UrlResource urlResource = (UrlResource) ks.getResources().newUrlResource(url);
+		String url = "http://localhost:8080/business-central/maven2/com/giovanni/contest-test/1.0/contest-test-1.0.jar";
+		UrlResource urlResource = (UrlResource) kieServices.getResources().newUrlResource(url);
 
 		// username dan password login ke business central
 		urlResource.setUsername("emerio");
@@ -54,23 +52,56 @@ public class ContestPRUForceTest {
 		urlResource.setBasicAuthentication("enabled");
 
 		InputStream is = urlResource.getInputStream();
-		KieModule kModule = kr.addKieModule(ks.getResources().newInputStreamResource(is));
+		KieModule kModule = kieRepository.addKieModule(kieServices.getResources().newInputStreamResource(is));
 
-		kContainer = ks.newKieContainer(kModule.getReleaseId());
-		kSession = getStatefulSession();
+		// generate dynamic rule to kBase
+		KieFileSystem kfs = kieServices.newKieFileSystem();
+
+		String rule = "package com.giovanni.contest_test; \n" + "rule \"contest_generated\" \n" + "when \n" + "then \n"
+				+ "System.out.println(\"rule generated fired\"); \n" + "end";
+
+		kfs.write("src/main/resources/rules/generatedRule.drl", rule);
+		System.out.println("isi rule yang akan digenerate : ");
+		System.out.println(rule);
+
+		KieBuilder kb = kieServices.newKieBuilder(kfs).buildAll();
+		// ReleaseId releaseId =
+		// kieServices.newReleaseId(kModule.getReleaseId().getGroupId(),
+		// kModule.getReleaseId().getArtifactId(),
+		// kModule.getReleaseId().getVersion());
+
+		kieRepository.addKieModule(kb.getKieModule());
+		// System.out.println(kieRepository.getKieModule(kb.getKieModule().getReleaseId()));
+
+		kieContainer = kieServices.newKieContainer(kModule.getReleaseId());
+		kieContainer = kieServices.newKieContainer(kb.getKieModule().getReleaseId());
+		kieSession = getStatefulSession();
 		statelessSession = getStatelessSession();
 
-		System.out.println("Connected to rule engine...");
+		System.out.println();
+		// System.out.println("kieModule from server = " + kModule.toString());
+		System.out.println("kieModule from java = " + kb.getKieModule().toString());
+		System.out.println();
+
+		// kb.buildAll(); // kieModule is automatically deployed to
+		// KieRepository if successfully built.
+		if (kb.getResults().hasMessages(Level.ERROR)) {
+			throw new RuntimeException("Build Errors:\n" + kb.getResults().toString());
+		} else {
+			System.out.println("rule successfully created \n");
+		}
+
+		System.out.println("Connected to rule server...");
 		System.out.println();
 		// cek jumlah rule yang ada di rule engine jar
 		cekRule();
 	}
 
 	public static void cekRule() {
-		KieBaseConfiguration kieBaseConf = ks.newKieBaseConfiguration();
+		KieBaseConfiguration kieBaseConf = kieServices.newKieBaseConfiguration();
 		kieBaseConf.setOption(EventProcessingOption.STREAM);
-		KieBase kBase = kContainer.newKieBase(kieBaseConf);
-		System.out.println("Isi rule yang ada engine : ");
+		KieBase kBase = kieContainer.newKieBase(kieBaseConf);
+		System.out.println("Isi rule yang ada di engine : ");
 		int i = 0;
 		for (KiePackage a : kBase.getKiePackages()) {
 			for (Rule r : a.getRules()) {
@@ -81,27 +112,112 @@ public class ContestPRUForceTest {
 		System.out.println();
 	}
 
+	// public static void testLoad2() throws IOException {
+	// KieServices ks = KieServices.Factory.get();
+	//
+	// KieFileSystem kfs = ks.newKieFileSystem();
+	//
+	//
+	// Resource ex1Res =
+	// ks.getResources().newFileSystemResource(getFile("named-kiesession"));
+	//
+	// Resource ex2Res =
+	// ks.getResources().newFileSystemResource(getFile("kiebase-inclusion"));
+	//
+	//
+	// ReleaseId rid = ks.newReleaseId("org.drools", "kiemodulemodel-example",
+	// "6.0.0-SNAPSHOT");
+	//
+	// kfs.generateAndWritePomXML(rid);
+	//
+	//
+	// KieModuleModel kModuleModel = ks.newKieModuleModel();
+	//
+	// kModuleModel.newKieBaseModel("kiemodulemodel")
+	//
+	// .addInclude("kiebase1")
+	//
+	// .addInclude("kiebase2")
+	//
+	// .newKieSessionModel("ksession6");
+	//
+	//
+	// kfs.writeKModuleXML(kModuleModel.toXML());
+	//
+	// kfs.write("src/main/resources/kiemodulemodel/HAL6.drl", getRule());
+	//
+	//
+	// KieBuilder kb = ks.newKieBuilder(kfs);
+	//
+	// kb.setDependencies(ex1Res, ex2Res);
+	//
+	// kb.buildAll(); // kieModule is automatically deployed to KieRepository if
+	// successfully built.
+	//
+	// if (kb.getResults().hasMessages(Level.ERROR)) {
+	//
+	// throw new RuntimeException("Build Errors:\n" +
+	// kb.getResults().toString());
+	//
+	// }
+	//
+	//
+	// KieContainer kContainer = ks.newKieContainer(rid);
+	//
+	//
+	// KieSession kSession = kContainer.newKieSession("ksession6");
+	//
+	// kSession.setGlobal("out", out);
+	//
+	//
+	// Object msg1 = createMessage(kContainer, "Dave", "Hello, HAL. Do you read
+	// me, HAL?");
+	//
+	// kSession.insert(msg1);
+	//
+	// kSession.fireAllRules();
+	//
+	//
+	// Object msg2 = createMessage(kContainer, "Dave", "Open the pod bay doors,
+	// HAL.");
+	//
+	// kSession.insert(msg2);
+	//
+	// kSession.fireAllRules();
+	//
+	//
+	// Object msg3 = createMessage(kContainer, "Dave", "What's the problem?");
+	//
+	// kSession.insert(msg3);
+	//
+	// kSession.fireAllRules();
+	// }
+
 	public static final void main(String[] args) {
 		try {
 			// load up the knowledge base #3
-			testLoad3();
+			testLoad1();
 
-			LoadFactTestScenarioInsertNewPolicyContestFsc();
+			// LoadFactTestScenarioInsertNewPolicyContestFsc();
 
-			kSession.fireAllRules();
+			kieSession.fireAllRules();
 
-			QueryResults results2 = kSession.getQueryResults("getObjectsOfContestDetail");
-			System.out.println();
-			for (QueryResultsRow row : results2) {
-				ContestDetail contestDetail = (ContestDetail) row.get("$result");
-				System.out.println("Contest detail object :   " + "agentCode: " + contestDetail.getAgentCode() + "     "
-						+ "policyNo: " + contestDetail.getPolicyNo() + "     " + "contestCode: "
-						+ contestDetail.getContestCode() + "     " + "api: " + contestDetail.getApi());
-			}
+			// QueryResults results2 =
+			// kieSession.getQueryResults("getObjectsOfContestDetail");
+			// System.out.println();
+			// for (QueryResultsRow row : results2) {
+			// ContestDetail contestDetail = (ContestDetail) row.get("$result");
+			// System.out.println("Contest detail object : " + "agentCode: " +
+			// contestDetail.getAgentCode() + " "
+			// + "policyNo: " + contestDetail.getPolicyNo() + " " +
+			// "contestCode: "
+			// + contestDetail.getContestCode() + " " + "api: " +
+			// contestDetail.getApi());
+			// }
 		} catch (Throwable t) {
 			t.printStackTrace();
 		} finally {
-			kSession.dispose();
+			kieSession.dispose();
 		}
 	}
 
@@ -125,7 +241,7 @@ public class ContestPRUForceTest {
 				policy.setProductCode("GOLD");
 				policy.setInstallmentPremium(new BigDecimal(1500000));
 			}
-			kSession.insert(policy);
+			kieSession.insert(policy);
 		}
 
 		// search agent data in each policy
@@ -133,13 +249,13 @@ public class ContestPRUForceTest {
 		agent1.setAgentNumber("AG01");
 		agent1.setAgentName("Gio");
 		agent1.setAgentType("LEADER");
-		kSession.insert(agent1);
+		kieSession.insert(agent1);
 
 		Agent agent2 = new Agent();
 		agent2.setAgentNumber("AG02");
 		agent2.setAgentName("Shadrach");
 		agent2.setAgentType("AGENT");
-		kSession.insert(agent2);
+		kieSession.insert(agent2);
 
 		// load all contest master data and contest parameter from database
 		// CONTEST 1
@@ -151,7 +267,7 @@ public class ContestPRUForceTest {
 		contestFsc.setEndDate(new Date());
 		contestFsc.setReviewingFlag("1");
 		contestFsc.setReviewingEndDate(new Date());
-		kSession.insert(contestFsc);
+		kieSession.insert(contestFsc);
 
 		// PARAMETER CONTEST 1 START
 		ContestParameter contestParamFsc1 = new ContestParameter();
@@ -159,14 +275,14 @@ public class ContestPRUForceTest {
 		contestParamFsc1.setParamCode("PRM01");
 		contestParamFsc1.setOperator("==");
 		contestParamFsc1.setValue("AGENT");
-		kSession.insert(contestParamFsc1);
+		kieSession.insert(contestParamFsc1);
 
 		ContestParameter contestParamFsc2 = new ContestParameter();
 		contestParamFsc2.setContestCode(contestFsc.getContestCode());
 		contestParamFsc2.setParamCode("PRM02");
 		contestParamFsc2.setOperator("==");
 		contestParamFsc2.setValue("GOLD");
-		kSession.insert(contestParamFsc2);
+		kieSession.insert(contestParamFsc2);
 		// PARAMETER CONTEST 1 END
 
 		// CONTEST 2
@@ -178,7 +294,7 @@ public class ContestPRUForceTest {
 		contestFsc2.setEndDate(new Date());
 		contestFsc2.setReviewingFlag("1");
 		contestFsc2.setReviewingEndDate(new Date());
-		kSession.insert(contestFsc2);
+		kieSession.insert(contestFsc2);
 
 		// PARAMETER CONTEST 2 START
 		ContestParameter contestParamFsc21 = new ContestParameter();
@@ -186,17 +302,17 @@ public class ContestPRUForceTest {
 		contestParamFsc21.setParamCode("PRM01");
 		contestParamFsc21.setOperator("==");
 		contestParamFsc21.setValue("LEADER");
-		kSession.insert(contestParamFsc21);
+		kieSession.insert(contestParamFsc21);
 
 		ContestParameter contestParamFsc22 = new ContestParameter();
 		contestParamFsc22.setContestCode(contestFsc2.getContestCode());
 		contestParamFsc22.setParamCode("PRM02");
 		contestParamFsc22.setOperator("==");
 		contestParamFsc22.setValue("SILVER");
-		kSession.insert(contestParamFsc22);
+		kieSession.insert(contestParamFsc22);
 		// PARAMETER CONTEST 2 END
 
-		kSession.getAgenda().getAgendaGroup("contest_pd_fsc").setFocus();
+		kieSession.getAgenda().getAgendaGroup("contest_pd_fsc").setFocus();
 	}
 
 	String ruleTemplate = "" + "package com.giovanni.contest_test; \n" + "rule \"{contestName}\" \n"
@@ -227,11 +343,11 @@ public class ContestPRUForceTest {
 	}
 
 	public static StatelessKieSession getStatelessSession() {
-		return kContainer.newStatelessKieSession();
+		return kieContainer.newStatelessKieSession();
 	}
 
 	public static KieSession getStatefulSession() {
-		return kContainer.newKieSession();
+		return kieContainer.newKieSession();
 		// return kContainer.newKieSession("ksession-rules");
 	}
 
