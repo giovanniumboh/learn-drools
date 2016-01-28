@@ -108,7 +108,7 @@ public class ContestPRUForceTest {
 	public static void LoadFactTestScenarioInsertNewPolicyContestFsc() {
 
 		// load policy data from database
-		for (int i = 1; i <= 10; i++) {
+		for (int i = 1; i <= 5; i++) {
 			Policy policy = new Policy();
 			policy.setPolicyNo("PLC0" + (i));
 			policy.setBillingChannel("PD");
@@ -116,7 +116,7 @@ public class ContestPRUForceTest {
 				policy.setAgentNumber("AG01");
 				policy.setProductCode("PLATINUM");
 				policy.setInstallmentPremium(new BigDecimal(200000));
-			} else if (i > 1 && i <= 5) {
+			} else if (i > 1 && i <= 3) {
 				policy.setAgentNumber("AG01");
 				policy.setProductCode("SILVER");
 				policy.setInstallmentPremium(new BigDecimal(1000000));
@@ -147,11 +147,21 @@ public class ContestPRUForceTest {
 		contestFsc.setContestCode("C0001");
 		contestFsc.setContestName("Contest FSC Partnership Distribution Awards Night Event");
 		contestFsc.setChannel("PD");
-		contestFsc.setStartDate(new Date());
-		contestFsc.setEndDate(new Date());
+		contestFsc.setStartDate(convertStringToDate("01-01-2016"));
+		contestFsc.setEndDate(convertStringToDate("01-12-2016"));
 		contestFsc.setReviewingFlag("1");
-		contestFsc.setReviewingEndDate(new Date());
+		contestFsc.setReviewingEndDate(convertStringToDate("01-01-2017"));
 		kSession.insert(contestFsc);
+
+		String master = "";
+		if (contestFsc.getChannel() != null) {
+			master = "channel == " + "\"" + contestFsc.getChannel() + "\", ";
+			// System.out.println(master);
+		}
+		if (contestFsc.getReviewingFlag() != null) {
+			master = master + "reviewingFlag == " + "\"" + contestFsc.getReviewingFlag() + "\" ";
+			// System.out.println(master);
+		}
 
 		// PARAMETER CONTEST 1 START
 		ContestParameter contestParamFsc1 = new ContestParameter();
@@ -174,10 +184,10 @@ public class ContestPRUForceTest {
 		contestFsc2.setContestCode("C0002");
 		contestFsc2.setContestName("Contest FSC Premier Club Gold");
 		contestFsc2.setChannel("PD");
-		contestFsc2.setStartDate(new Date());
-		contestFsc2.setEndDate(new Date());
+		contestFsc2.setStartDate(convertStringToDate("01-01-2016"));
+		contestFsc2.setEndDate(convertStringToDate("01-06-2016"));
 		contestFsc2.setReviewingFlag("1");
-		contestFsc2.setReviewingEndDate(new Date());
+		contestFsc2.setReviewingEndDate(convertStringToDate("01-01-2017"));
 		kSession.insert(contestFsc2);
 
 		// PARAMETER CONTEST 2 START
@@ -196,7 +206,9 @@ public class ContestPRUForceTest {
 		kSession.insert(contestParamFsc22);
 		// PARAMETER CONTEST 2 END
 
-		kSession.getAgenda().getAgendaGroup("contest_pd_fsc").setFocus();
+		// kSession.getAgenda().getAgendaGroup("contest_pd_fsc").setFocus();
+		kSession.getAgenda().getAgendaGroup("contest_desicion_table").setFocus();
+		// kSession.getAgenda().getAgendaGroup("contest_desicion_table_2").setFocus();
 	}
 
 	String ruleTemplate = "" + "package com.giovanni.contest_test; \n" + "rule \"{contestName}\" \n"

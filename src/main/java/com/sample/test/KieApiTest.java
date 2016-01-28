@@ -6,7 +6,6 @@ import java.util.Date;
 
 import org.drools.compiler.kproject.ReleaseIdImpl;
 import org.drools.core.io.impl.UrlResource;
-import org.kie.api.KieBase;
 import org.kie.api.KieBaseConfiguration;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieModule;
@@ -20,7 +19,6 @@ import org.kie.api.runtime.rule.QueryResults;
 import org.kie.api.runtime.rule.QueryResultsRow;
 
 import com.giovanni.contest_test.Agent;
-import com.giovanni.contest_test.Contest;
 import com.giovanni.contest_test.ContestDetail;
 import com.giovanni.contest_test.Policy;
 
@@ -177,29 +175,29 @@ public class KieApiTest {
 		// statelessSession.execute(agent);
 		kSession.insert(agent);
 
-		Contest contest1 = new Contest();
-		contest1.setContestCode("C0001");
-		contest1.setContestName("Contest Silver");
-		contest1.setContestType("Silver");
-		contest1.setNeedMonitor(false);
+		// Contest contest1 = new Contest();
+		// contest1.setContestCode("C0001");
+		// contest1.setContestName("Contest Silver");
+		// contest1.setContestType("Silver");
+		// contest1.setNeedMonitor(false);
 		// statelessSession.execute(contest1);
-		kSession.insert(contest1);
+		// kSession.insert(contest1);
 
-		Contest contest2 = new Contest();
-		contest2.setContestCode("C0002");
-		contest2.setContestName("Contest Gold");
-		contest2.setContestType("Gold");
-		contest2.setNeedMonitor(false);
+		// Contest contest2 = new Contest();
+		// contest2.setContestCode("C0002");
+		// contest2.setContestName("Contest Gold");
+		// contest2.setContestType("Gold");
+		// contest2.setNeedMonitor(false);
 		// statelessSession.execute(contest2);
-		kSession.insert(contest2);
+		// kSession.insert(contest2);
 
-		Contest contest3 = new Contest();
-		contest3.setContestCode("C0003");
-		contest3.setContestName("Contest Platinum");
-		contest3.setNeedMonitor(true);
-		contest3.setContestType("Platinum");
+		// Contest contest3 = new Contest();
+		// contest3.setContestCode("C0003");
+		// contest3.setContestName("Contest Platinum");
+		// contest3.setNeedMonitor(true);
+		// contest3.setContestType("Platinum");
 		// statelessSession.execute(contest3);
-		kSession.insert(contest3);
+		// kSession.insert(contest3);
 
 		Policy policy1 = new Policy();
 		policy1.setAgentCode("AG01");
@@ -235,13 +233,13 @@ public class KieApiTest {
 		// statelessSession.execute(agent);
 		kSession.insert(agent);
 
-		Contest contest1 = new Contest();
-		contest1.setContestCode("C0001");
-		contest1.setContestName("Contest Rookie PDr");
-		contest1.setContestType("PD");
-		contest1.setNeedMonitor(true);
+		// Contest contest1 = new Contest();
+		// contest1.setContestCode("C0001");
+		// contest1.setContestName("Contest Rookie PDr");
+		// contest1.setContestType("PD");
+		// contest1.setNeedMonitor(true);
 		// statelessSession.execute(contest1);
-		kSession.insert(contest1);
+		// kSession.insert(contest1);
 
 		Policy policy1 = new Policy();
 		policy1.setAgentCode("AG01");
