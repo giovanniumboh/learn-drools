@@ -94,8 +94,8 @@ public class ContestPRUForceTest {
 			System.out.println();
 			for (QueryResultsRow row : results2) {
 				ContestDetail contestDetail = (ContestDetail) row.get("$result");
-				System.out.println("Contest detail object :   " + "agentCode: " + contestDetail.getAgentCode() + "     "
-						+ "policyNo: " + contestDetail.getPolicyNo() + "     " + "contestCode: "
+				System.out.println("Contest detail object :   " + "agentCode: " + contestDetail.getAgentNumber()
+						+ "     " + "policyNo: " + contestDetail.getPolicyNo() + "     " + "contestCode: "
 						+ contestDetail.getContestCode() + "     " + "api: " + contestDetail.getApi());
 			}
 		} catch (Throwable t) {
@@ -108,7 +108,7 @@ public class ContestPRUForceTest {
 	public static void LoadFactTestScenarioInsertNewPolicyContestFsc() {
 
 		// load policy data from database
-		for (int i = 1; i <= 5; i++) {
+		for (int i = 1; i <= 10; i++) {
 			Policy policy = new Policy();
 			policy.setPolicyNo("PLC0" + (i));
 			policy.setBillingChannel("PD");

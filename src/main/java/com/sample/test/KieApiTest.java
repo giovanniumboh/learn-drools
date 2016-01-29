@@ -18,7 +18,6 @@ import org.kie.api.runtime.StatelessKieSession;
 import org.kie.api.runtime.rule.QueryResults;
 import org.kie.api.runtime.rule.QueryResultsRow;
 
-import com.giovanni.contest_test.Agent;
 import com.giovanni.contest_test.ContestDetail;
 import com.giovanni.contest_test.Policy;
 
@@ -146,7 +145,7 @@ public class KieApiTest {
 			System.out.println();
 			for (QueryResultsRow row : results2) {
 				ContestDetail contestDetail = (ContestDetail) row.get("$result");
-				System.out.println("Contest detail object : " + contestDetail.getAgentCode() + "\t"
+				System.out.println("Contest detail object : " + contestDetail.getAgentNumber() + "\t"
 						+ contestDetail.getPolicyNo() + "\t" + contestDetail.getContestCode());
 			}
 
@@ -169,11 +168,11 @@ public class KieApiTest {
 	}
 
 	public static void LoadFactTestScenario1() {
-		Agent agent = new Agent();
-		agent.setAgentCode("AG01");
-		agent.setAgentName("Gio");
+		// Agent agent = new Agent();
+		// agent.setAgentNumber("AG01");
+		// agent.setAgentName("Gio");
 		// statelessSession.execute(agent);
-		kSession.insert(agent);
+		// kSession.insert(agent);
 
 		// Contest contest1 = new Contest();
 		// contest1.setContestCode("C0001");
@@ -200,21 +199,21 @@ public class KieApiTest {
 		// kSession.insert(contest3);
 
 		Policy policy1 = new Policy();
-		policy1.setAgentCode("AG01");
+		policy1.setAgentNumber("AG01");
 		policy1.setPolicyNo("PLC01");
 		policy1.setPolicyType("Silver");
 		// statelessSession.execute(policy1);
 		kSession.insert(policy1);
 
 		Policy policy2 = new Policy();
-		policy2.setAgentCode("AG01");
+		policy2.setAgentNumber("AG01");
 		policy2.setPolicyNo("PLC01");
 		policy2.setPolicyType("Gold");
 		// statelessSession.execute(policy2);
 		kSession.insert(policy2);
 
 		Policy policy3 = new Policy();
-		policy3.setAgentCode("AG01");
+		policy3.setAgentNumber("AG01");
 		policy3.setPolicyNo("PLC03");
 		policy3.setPolicyType("Platinum");
 		// statelessSession.execute(policy3);
@@ -227,11 +226,11 @@ public class KieApiTest {
 	}
 
 	public static void LoadFactTestScenario2() {
-		Agent agent = new Agent();
-		agent.setAgentCode("AG01");
-		agent.setAgentName("Giovanni");
+		// Agent agent = new Agent();
+		// agent.setAgentNumber("AG01");
+		// agent.setAgentName("Giovanni");
 		// statelessSession.execute(agent);
-		kSession.insert(agent);
+		// kSession.insert(agent);
 
 		// Contest contest1 = new Contest();
 		// contest1.setContestCode("C0001");
@@ -242,7 +241,7 @@ public class KieApiTest {
 		// kSession.insert(contest1);
 
 		Policy policy1 = new Policy();
-		policy1.setAgentCode("AG01");
+		policy1.setAgentNumber("AG01");
 		policy1.setPolicyNo("PLC01");
 		policy1.setPolicyType("PD");
 		// policy1.setFirstIssueDate(null);
