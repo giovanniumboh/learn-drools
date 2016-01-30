@@ -63,7 +63,7 @@ public class ContestPRUForceTest {
 		System.out.println("Connected to rule engine...");
 		System.out.println();
 		// cek jumlah rule yang ada di rule engine jar
-		cekRule();
+		// cekRule();
 	}
 
 	public static void cekRule() {
