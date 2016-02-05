@@ -42,7 +42,7 @@ public class ContestPRUForceTest {
 		// url ini menuju ke maven repository file jar rule yang kita tuju,
 		// untuk pathnya bisa dilihat di business central menu Authoring ->
 		// Artifact Repository
-		String url = "http://localhost:8080/business-central/maven2/com/giovanni/contest-test/1.0/contest-test-1.0.jar";
+		String url = "http://localhost:8080//business-central/maven2/com/giovanni/contest-test/1.0/contest-test-1.0.jar";
 		ks = KieServices.Factory.get();
 
 		KieRepository kr = ks.getRepository();
@@ -51,6 +51,7 @@ public class ContestPRUForceTest {
 		// username dan password login ke business central
 		urlResource.setUsername("emerio");
 		urlResource.setPassword("emerio@123");
+		// urlResource.setPassword("P@ssw0rd");
 		urlResource.setBasicAuthentication("enabled");
 
 		InputStream is = urlResource.getInputStream();
@@ -63,7 +64,7 @@ public class ContestPRUForceTest {
 		System.out.println("Connected to rule engine...");
 		System.out.println();
 		// cek jumlah rule yang ada di rule engine jar
-		// cekRule();
+		cekRule();
 	}
 
 	public static void cekRule() {
@@ -150,7 +151,7 @@ public class ContestPRUForceTest {
 		contestFsc.setStartDate(convertStringToDate("01-01-2016"));
 		contestFsc.setEndDate(convertStringToDate("01-12-2016"));
 		contestFsc.setReviewingFlag("1");
-		contestFsc.setReviewingEndDate(convertStringToDate("01-01-2017"));
+		contestFsc.setReviewingEndDate(convertStringToDate("31-03-2017"));
 		kSession.insert(contestFsc);
 
 		String master = "";
@@ -187,7 +188,7 @@ public class ContestPRUForceTest {
 		contestFsc2.setStartDate(convertStringToDate("01-01-2016"));
 		contestFsc2.setEndDate(convertStringToDate("01-06-2016"));
 		contestFsc2.setReviewingFlag("1");
-		contestFsc2.setReviewingEndDate(convertStringToDate("01-01-2017"));
+		contestFsc2.setReviewingEndDate(convertStringToDate("31-03-2017"));
 		kSession.insert(contestFsc2);
 
 		// PARAMETER CONTEST 2 START
@@ -208,7 +209,6 @@ public class ContestPRUForceTest {
 
 		// kSession.getAgenda().getAgendaGroup("contest_pd_fsc").setFocus();
 		kSession.getAgenda().getAgendaGroup("contest_desicion_table").setFocus();
-		// kSession.getAgenda().getAgendaGroup("contest_desicion_table_2").setFocus();
 	}
 
 	String ruleTemplate = "" + "package com.giovanni.contest_test; \n" + "rule \"{contestName}\" \n"
