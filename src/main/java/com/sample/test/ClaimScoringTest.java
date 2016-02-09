@@ -79,9 +79,10 @@ public class ClaimScoringTest {
 			// load up the knowledge base #3
 			testLoad3();
 
-			// LoadFactTestScenario1();
-			// kSession.fireAllRules();
-			LoadFactTestScenario2();
+			LoadFactTestScenario1();
+			kSession.fireAllRules();
+			// LoadFactTestScenario2();
+			kSession.getAgenda().getAgendaGroup("rating").setFocus();
 			kSession.fireAllRules();
 
 			QueryResults results2 = kSession.getQueryResults("getObjectsOfClaim");
@@ -121,12 +122,11 @@ public class ClaimScoringTest {
 			} else if (i > 1 && i <= 2) {
 				claim.setClaimType("CC");
 				claim.setTotalScoring(0);
-				claim.setClaimAmount(BigDecimal.valueOf(50000000));
+				claim.setClaimAmount(BigDecimal.valueOf(10000000));
 			}
 			kSession.insert(claim);
 		}
 
-		// search agent data in each policy
 		Parameter param1 = new Parameter();
 		param1.setParamCode("P01");
 		param1.setParamName("Black Hospital Flag");
