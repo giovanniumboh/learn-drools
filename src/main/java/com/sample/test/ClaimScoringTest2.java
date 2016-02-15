@@ -101,7 +101,7 @@ public class ClaimScoringTest2 {
 					System.out.println(
 							"Claim Parameter object :   " + "Contract Number: " + claimParameter.getContractNumber()
 									+ "     " + "Param Code: " + claimParameter.getParamCode() + "     " + "Value: "
-									+ claimParameter.isProcessed() + "     " + "Score: " + claimParameter.getScore());
+									+ claimParameter.getValue() + "     " + "Score: " + claimParameter.getScore());
 				}
 				System.out.println();
 				listClaimUpdated.add(claim);
@@ -112,31 +112,6 @@ public class ClaimScoringTest2 {
 				Parameter parameter = (Parameter) row.get("$resultParameter");
 				listParameter.add(parameter);
 			}
-
-			// LoadFactRating(listClaimUpdated);
-			// kSession.fireAllRules();
-
-			// System.out.println("HASIL KEDUA");
-			// QueryResults results3 =
-			// kSession.getQueryResults("getObjectsOfClaim");
-			// for (QueryResultsRow row : results3) {
-			// Claim claim = (Claim) row.get("$resultClaim");
-			// System.out.println(
-			// "Claim object : " + "Contract Number: " +
-			// claim.getContractNumber() + " " + "Claim Type: "
-			// + claim.getClaimType() + " " + "Total Scoring: " +
-			// claim.getTotalScoring());
-			// for (ClaimParameter claimParameter : claim.getListClaimParam()) {
-			// System.out.println("Claim Parameter object : " + "Contract
-			// Number: "
-			// + claimParameter.getContractNumber() + " " + "Param Code: "
-			// + claimParameter.getParamCode() + " " + "Value: " +
-			// claimParameter.isProcessed()
-			// + " " + " " + "Score: " + claimParameter.getScore());
-			// }
-			// System.out.println();
-			// }
-
 		} catch (Throwable t) {
 			t.printStackTrace();
 		} finally {
@@ -160,12 +135,11 @@ public class ClaimScoringTest2 {
 				for (ClaimParameter claimParameter : claim.getListClaimParam()) {
 					System.out.println("Claim Parameter object :   " + "Contract Number: "
 							+ claimParameter.getContractNumber() + "     " + "Param Code: "
-							+ claimParameter.getParamCode() + "     " + "Value: " + claimParameter.isProcessed()
-							+ "     " + "     " + "Score: " + claimParameter.getScore());
+							+ claimParameter.getParamCode() + "     " + "Value: " + claimParameter.getValue() + "     "
+							+ "     " + "Score: " + claimParameter.getScore());
 				}
 				System.out.println();
 			}
-
 		} catch (Throwable t) {
 			t.printStackTrace();
 		} finally {
@@ -174,7 +148,7 @@ public class ClaimScoringTest2 {
 	}
 
 	public static void LoadFactParam(List<Claim> claimData) {
-		for (int i = 1; i <= 2; i++) {
+		for (int i = 1; i <= 3; i++) {
 			Claim claim = new Claim();
 			claim.setContractNumber("19027293" + (i));
 			if (i == 1) {
@@ -183,7 +157,7 @@ public class ClaimScoringTest2 {
 				claim.setClaimAmount(BigDecimal.valueOf(400000));
 
 				ClaimParameter claimParam1 = new ClaimParameter();
-				claimParam1.setContractNumber("190272931");
+				claimParam1.setContractNumber(claim.getContractNumber());
 				claimParam1.setParamCode("P01");
 				claimParam1.setValue("Y");
 				claim.getListClaimParam().add(claimParam1);
@@ -191,29 +165,113 @@ public class ClaimScoringTest2 {
 				kSession.insert(claimParam1);
 
 				ClaimParameter claimParam2 = new ClaimParameter();
-				claimParam2.setContractNumber("190272931");
+				claimParam2.setContractNumber(claim.getContractNumber());
 				claimParam2.setParamCode("P02");
-				claimParam2.setValue("N");
+				claimParam2.setValue("Y");
 				claim.getListClaimParam().add(claimParam2);
 				listClaimParamCode.add(claimParam2.getParamCode());
 				kSession.insert(claimParam2);
-			} else if (i > 1 && i <= 2) {
-				claim.setClaimType("CC");
-				claim.setTotalScoring(0);
-				claim.setClaimAmount(BigDecimal.valueOf(9000000));
 
 				ClaimParameter claimParam3 = new ClaimParameter();
-				claimParam3.setContractNumber("190272932");
-				claimParam3.setParamCode("P01");
+				claimParam3.setContractNumber(claim.getContractNumber());
+				claimParam3.setParamCode("P03");
 				claimParam3.setValue("Y");
 				claim.getListClaimParam().add(claimParam3);
 				listClaimParamCode.add(claimParam3.getParamCode());
 				kSession.insert(claimParam3);
 
 				ClaimParameter claimParam4 = new ClaimParameter();
-				claimParam4.setContractNumber("190272932");
+				claimParam4.setContractNumber(claim.getContractNumber());
+				claimParam4.setParamCode("P04");
+				claimParam4.setValue("Y");
+				claim.getListClaimParam().add(claimParam4);
+				listClaimParamCode.add(claimParam4.getParamCode());
+				kSession.insert(claimParam4);
+
+				ClaimParameter claimParam5 = new ClaimParameter();
+				claimParam5.setContractNumber(claim.getContractNumber());
+				claimParam5.setParamCode("P18");
+				claimParam5.setValue("Y");
+				claim.getListClaimParam().add(claimParam5);
+				listClaimParamCode.add(claimParam5.getParamCode());
+				kSession.insert(claimParam5);
+			} else if (i > 1 && i <= 2) {
+				claim.setClaimType("CC");
+				claim.setTotalScoring(0);
+				claim.setClaimAmount(BigDecimal.valueOf(50000000));
+
+				ClaimParameter claimParam1 = new ClaimParameter();
+				claimParam1.setContractNumber(claim.getContractNumber());
+				claimParam1.setParamCode("P01");
+				claimParam1.setValue("N");
+				claim.getListClaimParam().add(claimParam1);
+				listClaimParamCode.add(claimParam1.getParamCode());
+				kSession.insert(claimParam1);
+
+				ClaimParameter claimParam2 = new ClaimParameter();
+				claimParam2.setContractNumber(claim.getContractNumber());
+				claimParam2.setParamCode("P02");
+				claimParam2.setValue("Y");
+				claim.getListClaimParam().add(claimParam2);
+				listClaimParamCode.add(claimParam2.getParamCode());
+				kSession.insert(claimParam2);
+
+				ClaimParameter claimParam3 = new ClaimParameter();
+				claimParam3.setContractNumber(claim.getContractNumber());
+				claimParam3.setParamCode("P03");
+				claimParam3.setValue("N");
+				claim.getListClaimParam().add(claimParam3);
+				listClaimParamCode.add(claimParam3.getParamCode());
+				kSession.insert(claimParam3);
+
+				ClaimParameter claimParam4 = new ClaimParameter();
+				claimParam4.setContractNumber(claim.getContractNumber());
+				claimParam4.setParamCode("P04");
+				claimParam4.setValue("Y");
+				claim.getListClaimParam().add(claimParam4);
+				listClaimParamCode.add(claimParam4.getParamCode());
+				kSession.insert(claimParam4);
+
+				ClaimParameter claimParam5 = new ClaimParameter();
+				claimParam5.setContractNumber(claim.getContractNumber());
+				claimParam5.setParamCode("P18");
+				claimParam5.setValue("Y");
+				claim.getListClaimParam().add(claimParam5);
+				listClaimParamCode.add(claimParam5.getParamCode());
+				kSession.insert(claimParam5);
+			} else {
+				claim.setClaimType("Death Claim");
+				claim.setTotalScoring(0);
+				claim.setClaimAmount(BigDecimal.valueOf(200000000));
+
+				ClaimParameter claimParam1 = new ClaimParameter();
+				claimParam1.setContractNumber(claim.getContractNumber());
+				claimParam1.setParamCode("P01");
+				claimParam1.setValue("N");
+				claim.getListClaimParam().add(claimParam1);
+				listClaimParamCode.add(claimParam1.getParamCode());
+				kSession.insert(claimParam1);
+
+				ClaimParameter claimParam2 = new ClaimParameter();
+				claimParam2.setContractNumber(claim.getContractNumber());
+				claimParam2.setParamCode("P02");
+				claimParam2.setValue("Y");
+				claim.getListClaimParam().add(claimParam2);
+				listClaimParamCode.add(claimParam2.getParamCode());
+				kSession.insert(claimParam2);
+
+				ClaimParameter claimParam3 = new ClaimParameter();
+				claimParam3.setContractNumber(claim.getContractNumber());
+				claimParam3.setParamCode("P03");
+				claimParam3.setValue("Y");
+				claim.getListClaimParam().add(claimParam3);
+				listClaimParamCode.add(claimParam3.getParamCode());
+				kSession.insert(claimParam3);
+
+				ClaimParameter claimParam4 = new ClaimParameter();
+				claimParam4.setContractNumber(claim.getContractNumber());
 				claimParam4.setParamCode("P18");
-				claimParam4.setValue("N");
+				claimParam4.setValue("Y");
 				claim.getListClaimParam().add(claimParam4);
 				listClaimParamCode.add(claimParam4.getParamCode());
 				kSession.insert(claimParam4);
