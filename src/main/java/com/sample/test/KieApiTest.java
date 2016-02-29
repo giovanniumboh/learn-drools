@@ -201,21 +201,21 @@ public class KieApiTest {
 		Policy policy1 = new Policy();
 		policy1.setAgentNumber("AG01");
 		policy1.setPolicyNo("PLC01");
-		policy1.setPolicyType("Silver");
+		// policy1.setPolicyType("Silver");
 		// statelessSession.execute(policy1);
 		kSession.insert(policy1);
 
 		Policy policy2 = new Policy();
 		policy2.setAgentNumber("AG01");
 		policy2.setPolicyNo("PLC01");
-		policy2.setPolicyType("Gold");
+		// policy2.setPolicyType("Gold");
 		// statelessSession.execute(policy2);
 		kSession.insert(policy2);
 
 		Policy policy3 = new Policy();
 		policy3.setAgentNumber("AG01");
 		policy3.setPolicyNo("PLC03");
-		policy3.setPolicyType("Platinum");
+		// policy3.setPolicyType("Platinum");
 		// statelessSession.execute(policy3);
 		kSession.insert(policy3);
 
@@ -243,7 +243,7 @@ public class KieApiTest {
 		Policy policy1 = new Policy();
 		policy1.setAgentNumber("AG01");
 		policy1.setPolicyNo("PLC01");
-		policy1.setPolicyType("PD");
+		// policy1.setPolicyType("PD");
 		// policy1.setFirstIssueDate(null);
 		policy1.setProposalReceivedDate(new Date());
 		// statelessSession.execute(policy1);
